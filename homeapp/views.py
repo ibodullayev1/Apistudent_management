@@ -55,6 +55,7 @@ class CourseViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retri
             return Response({'error': 'Student not found'}, status=404)
 
 from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
@@ -65,6 +66,9 @@ class UserSerializer(ModelSerializer):
         model = User
         fields = ['id', 'username', 'password']
         extra_kwargs = {'password': {'write_only': True}}
+
+    def validate_password(self, password):
+        return make_password(password)
 
 class RegisterUserView(generics.CreateAPIView):
     queryset = User.objects.all()
